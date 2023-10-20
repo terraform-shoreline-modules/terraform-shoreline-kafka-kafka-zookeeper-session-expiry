@@ -1,0 +1,178 @@
+{
+  "name": "kafka_zookeeper_session_expiry_incident",
+  "description": "This incident type refers to an issue with the Apache Kafka distributed streaming platform where the connection between the Kafka brokers and the ZooKeeper ensemble is interrupted due to the expiration of ZooKeeper session. This may result in temporary unavailability of Kafka brokers, leading to data loss or system downtime. The incident requires immediate attention and resolution to restore normal system operation.",
+  "params": [
+    {
+      "name": "TOPIC_NAME",
+      "value": ""
+    },
+    {
+      "name": "KAFKA_SERVER_PROPERTIES_FILE_PATH",
+      "value": ""
+    },
+    {
+      "name": "KAFKA_LOG_FILE_PATH",
+      "value": ""
+    },
+    {
+      "name": "CONSUMER_GROUP_NAME",
+      "value": ""
+    },
+    {
+      "name": "KAFKA_BOOTSTRAP_SERVERS",
+      "value": ""
+    },
+    {
+      "name": "ZOOKEEPER_CONNECTION_STRING",
+      "value": ""
+    },
+    {
+      "name": "ZOOKEEPER_LOG_FILE_PATH",
+      "value": ""
+    },
+    {
+      "name": "HOST_NAME",
+      "value": ""
+    }
+  ],
+  "cells": [
+    {
+      "name": "cell_1",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Kafka ZooKeeper Session Expiry Incident.\nThis incident type refers to an issue with the Apache Kafka distributed streaming platform where the connection between the Kafka brokers and the ZooKeeper ensemble is interrupted due to the expiration of ZooKeeper session. This may result in temporary unavailability of Kafka brokers, leading to data loss or system downtime. The incident requires immediate attention and resolution to restore normal system operation."
+    },
+    {
+      "name": "cell_2",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check ZooKeeper status"
+    },
+    {
+      "name": "cell_3",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_zk_status()"
+    },
+    {
+      "name": "cell_4",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check Kafka status"
+    },
+    {
+      "name": "cell_5",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_kafka_status()"
+    },
+    {
+      "name": "cell_6",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check ZooKeeper logs for errors"
+    },
+    {
+      "name": "cell_7",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_zookeeper_logs($ZOOKEEPER_LOG_FILE_PATH)"
+    },
+    {
+      "name": "cell_8",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check Kafka logs for errors"
+    },
+    {
+      "name": "cell_9",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_kafka_logs($KAFKA_LOG_FILE_PATH)"
+    },
+    {
+      "name": "cell_10",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the ZooKeeper session timeout value"
+    },
+    {
+      "name": "cell_11",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_get_kafka_session_timeout($KAFKA_SERVER_PROPERTIES_FILE_PATH)"
+    },
+    {
+      "name": "cell_12",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the Kafka broker configuration for ZooKeeper connection string"
+    },
+    {
+      "name": "cell_13",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_kafka_zookeeper_config($KAFKA_SERVER_PROPERTIES_FILE_PATH)"
+    },
+    {
+      "name": "cell_14",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the Kafka topic configuration for replication factor"
+    },
+    {
+      "name": "cell_15",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_kafka_topic_config($TOPIC_NAME, $ZOOKEEPER_CONNECTION_STRING)"
+    },
+    {
+      "name": "cell_16",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the Kafka consumer groups for active consumers"
+    },
+    {
+      "name": "cell_17",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_kafka_consumer_groups($KAFKA_BOOTSTRAP_SERVERS)"
+    },
+    {
+      "name": "cell_18",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Check the Kafka consumer group lag for a specific topic"
+    },
+    {
+      "name": "cell_19",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_kafka_consumer_group_lag($TOPIC_NAME, $CONSUMER_GROUP_NAME, $KAFKA_BOOTSTRAP_SERVERS)"
+    },
+    {
+      "name": "cell_20",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Increase the ZooKeeper session timeout value to avoid expirations."
+    },
+    {
+      "name": "cell_21",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_update_zookeeper_timeout()"
+    },
+    {
+      "name": "cell_22",
+      "type": "MARKDOWN",
+      "enabled": true,
+      "content": "## Configure Kafka to automatically re-establish a connection when a ZooKeeper session expires."
+    },
+    {
+      "name": "cell_23",
+      "type": "OP_LANG",
+      "enabled": true,
+      "content": "host | host_name=$HOST_NAME | invoke_kafka_config_update()"
+    }
+  ]
+}
